@@ -31,6 +31,34 @@ Leveraging the magic of Github Actions the workflows can:
 3. Edit `repo/rpi/conf/distributions` and `repo/rpi/conf/incoming`.
 4. Commit and push changes.
 
+## Howto update public key
+
+```
+[extract keys into ~/.gnupg]
+
+$> keyid=$(gpg --list-secret-keys --with-colons | \
+        grep -E "^sec:" | \
+        cut -d: -f5) # or specify manually
+$> creation_time=$(gpg \
+        --list-keys \
+        --with-colons \
+        --fixed-list-mode "$keyid" | \
+        grep -E '^[sp]ub:' | \
+        cut -d: -f6 | \
+        sort -n | \
+        tail -1)
+$> gpg \
+        --faked-system-time="$(( creation_time + 1 ))\!" \
+        --cert-digest-algo SHA256 \
+        --edit-key "$keyid"
+
+gpg> key 1
+gpg> expire
+gpg> key 0
+gpg> expire
+gpg> save
+```
+
 ## Credit
 
 This was made with the help of these great guides/resources:
@@ -38,3 +66,4 @@ This was made with the help of these great guides/resources:
 - https://grid.in.th/2020/10/cross-compile-raspbian-x64
 - https://jod.al/2015/03/08/building-arm-debs-with-pbuilder/
 - https://github.com/mopidy/apt
+- https://www.redhat.com/en/blog/updating-gpg-keys-for-fedora-and-rhel
