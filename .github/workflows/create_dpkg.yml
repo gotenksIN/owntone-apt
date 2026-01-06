@@ -3,8 +3,6 @@ name: Create Debian packages
 on:
   workflow_dispatch:
     inputs:
-      raspbian-buster-armhf:
-        type: boolean
       raspbian-bullseye-armhf:
         type: boolean
       raspbian-bookworm-armhf:
@@ -33,7 +31,6 @@ on:
 # important to support multiline json as per:
 # https://github.community/t/set-output-truncates-multiline-strings/16852
 env:
-  raspbian-buster-armhf: '{"image":"raspbian-buster-armhf","OS":"raspbian","DIST":"buster","ARCH":"armhf","FLAGS":""}'
   raspbian-bullseye-armhf: '{"image":"raspbian-bullseye-armhf","OS":"raspbian","DIST":"bullseye","ARCH":"armhf","FLAGS":"-- --binary-arch"}'
   raspbian-bookworm-armhf: '{"image":"raspbian-bookworm-armhf","OS":"raspbian","DIST":"bookworm","ARCH":"armhf","FLAGS":"-- --binary-arch"}'
   raspbian-trixie-armhf: '{"image":"raspbian-trixie-armhf","OS":"raspbian","DIST":"trixie","ARCH":"armhf","FLAGS":"-- --binary-arch"}'
@@ -51,7 +48,6 @@ jobs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     env:
       PKGCONF: pkgconf
-      BUILD_raspbian-buster-armhf: ${{ github.event.inputs.raspbian-buster-armhf || 'true' }}
       BUILD_raspbian-bullseye-armhf: ${{ github.event.inputs.raspbian-bullseye-armhf || 'true' }}
       BUILD_raspbian-bookworm-armhf: ${{ github.event.inputs.raspbian-bookworm-armhf || 'true' }}
       BUILD_raspbian-trixie-armhf: ${{ github.event.inputs.raspbian-trixie-armhf || 'true' }}
@@ -63,10 +59,6 @@ jobs:
       BUILD_debian-trixie-amd64: ${{ github.event.inputs.debian-trixie-amd64 || 'true' }}
 
     steps:
-      - name: Add raspbian-buster-armhf
-        if: ${{ env.BUILD_raspbian-buster-armhf == 'true' }}
-        run: echo -n '${{ env.raspbian-buster-armhf }},' >> $PKGCONF
-
       - name: Add raspbian-bullseye-armhf
         if: ${{ env.BUILD_raspbian-bullseye-armhf == 'true' }}
         run: echo -n '${{ env.raspbian-bullseye-armhf }},' >> $PKGCONF
