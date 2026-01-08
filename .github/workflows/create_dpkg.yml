@@ -118,6 +118,7 @@ jobs:
         if: steps.cache-image.outputs.cache-hit == 'true'
         run: |
           sudo cp cache/${{ matrix.image }}-base.tgz /var/cache/pbuilder/
+          sudo OS=${{ matrix.OS }} DIST=${{ matrix.DIST }} ARCH=${{ matrix.ARCH }} pbuilder update --configfile pbuilderrc
       - name: Or create pbuilder image
         if: steps.cache-image.outputs.cache-hit != 'true'
         run: |
